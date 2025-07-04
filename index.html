@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aldiramdhan - Link Proyek</title>
+    <!-- Chosen Palette: Google Inspired Light -->
+    <!-- Application Structure Plan: A "Linktree" style page. This is a single-column, mobile-first layout designed for quick access to essential links. The structure includes a header with a personal title, followed by a primary list of action buttons for different projects, and an interactive AI-powered idea generator. This is the most efficient structure for users to navigate to specific projects from a central hub while also engaging them with a creative feature. -->
+    <!-- Visualization & Content Choices: The entire page is a list of interactive elements. Each button is a clear call-to-action. The Gemini API feature uses a button to trigger the generation and a dedicated card to display the result, with a loading state for better UX. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        /* Fallback for Google Sans */
+        @font-face {
+          font-family: 'Google Sans';
+          font-style: normal;
+          font-weight: 400;
+          src: url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nC16hvkC1ks3o3P52K_uRs.woff2) format('woff2');
+        }
+        
+        body {
+            font-family: 'Google Sans', sans-serif;
+            background-color: #FFFFFF;
+            color: #3c4043;
+        }
+        .font-title {
+            /* Using Press Start 2P as a substitute for AddLGBitmap09 */
+            font-family: 'Press Start 2P', cursive;
+        }
+        .font-subtitle {
+            /* Using VT323 as a substitute for 11px3bus */
+            font-family: 'VT323', monospace;
+        }
+        .link-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid #202124;
+            box-shadow: 4px 4px 0px #202124;
+        }
+        .link-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #202124;
+        }
+        .gemini-button {
+            background-color: #FEE49A;
+            color: #A16207;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4285F4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-50 py-10">
+
+    <div class="w-full max-w-md mx-auto p-6">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="font-title text-2xl md:text-3xl text-gray-800 mb-2">Aldi Ramdhani</h1>
+            <p class="text-gray-600">Kumpulan Proyek Digital</p>
+        </header>
+
+        <!-- Links -->
+        <main class="space-y-5">
+            <a href="https://aldiramdhan.github.io/draf-pixels-web/" target="_blank" class="link-button" style="background-color: #BBDBF7; color: #1967D2;">
+                PIXELS Challenge 2.0 Website
+            </a>
+            <a href="https://aldiramdhan.github.io/aldnews/" target="_blank" class="link-button" style="background-color: #BFF6BE; color: #1E8E3E;">
+                Proyek AldNews
+            </a>
+            <a href="#" id="inactive-btn" class="link-button bg-gray-200 text-gray-500 border-gray-400 shadow-none cursor-not-allowed">
+                Proyek Lainnya (Segera Hadir)
+            </a>
+        </main>
+
+        <!-- Gemini API Feature -->
+        <section id="gemini-feature" class="mt-12 text-center">
+            <button id="generate-idea-btn" class="link-button gemini-button">
+                ✨ Hasilkan Ide Proyek Untukmu
+            </button>
+            <div id="loader" class="hidden mx-auto my-6">
+                <div class="loader"></div>
+            </div>
+            <div id="idea-result" class="hidden mt-6 p-6 bg-white border-2 border-dashed border-gray-300 rounded-lg text-left">
+                <!-- Hasil dari Gemini akan ditampilkan di sini -->
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12">
+            <p class="text-sm text-gray-500">Dibuat dengan ❤️ & Gemini API</p>
+        </footer>
+
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    
+    // Inactive button
+    const inactiveButton = document.getElementById('inactive-btn');
+    if (inactiveButton) {
+        inactiveButton.addEventListener('click', function(e) {
+            e.preventDefault();
+        });
+    }
+
+    // Gemini API Feature
+    const generateBtn = document.getElementById('generate-idea-btn');
+    const loader = document.getElementById('loader');
+    const resultContainer = document.getElementById('idea-result');
+
+    generateBtn.addEventListener('click', async () => {
+        resultContainer.classList.add('hidden');
+        loader.classList.remove('hidden');
+        generateBtn.disabled = true;
+
+        const prompt = "Anda adalah seorang ahli inovasi teknologi dan desain produk. Berdasarkan portofolio yang berisi situs web kompetisi desain produk (PIXELS Challenge) dan proyek agregator berita (AldNews), hasilkan satu ide proyek yang segar dan kreatif dalam bahasa Indonesia. Ide tersebut harus cocok untuk seorang mahasiswa atau developer pemula. Jelaskan proyek tersebut dalam 2-3 kalimat. Format keluarannya harus: **Nama Proyek:** [Nama]\n**Deskripsi:** [Deskripsi].";
+        
+        try {
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = "" // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+            
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+              const text = result.candidates[0].content.parts[0].text;
+              // Format the text to HTML
+              const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
+                .replace(/\n/g, '<br>');
+              resultContainer.innerHTML = formattedText;
+            } else {
+              resultContainer.innerHTML = '<p class="text-red-500">Maaf, terjadi kesalahan saat menghasilkan ide. Silakan coba lagi.</p>';
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            resultContainer.innerHTML = '<p class="text-red-500">Tidak dapat terhubung ke layanan AI. Periksa koneksi internet Anda dan coba lagi.</p>';
+        } finally {
+            loader.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            generateBtn.disabled = false;
+        }
+    });
+});
+</script>
+
+</body>
+</html>
