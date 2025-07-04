@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
             chatHistory.push({ role: "user", parts: [{ text: prompt }] });
             const payload = { contents: chatHistory };
             const apiKey = "" // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyB351DLmT6gkkWeWR1w61Jtv3iTpKK0jxI`;
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
